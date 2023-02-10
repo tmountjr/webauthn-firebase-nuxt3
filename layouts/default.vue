@@ -1,13 +1,10 @@
 <script setup lang="ts">
-import { storeToRefs } from 'pinia'
-import { ref, computed } from 'vue'
+import { ref } from 'vue'
 
+// Use Pinia to track the theme site-wide
 const themeStore = useThemeStore()
-const { toggleTheme } = themeStore
-const { theme } = storeToRefs(themeStore)
-const drawer = ref(false)
 
-const themeIcon = computed(() => theme.value === 'light' ? 'mdi-weather-sunny' : 'mdi-weather-night')
+const drawer = ref(false)
 const toggleDrawer = () => {
   drawer.value = !drawer.value
 }
@@ -15,12 +12,12 @@ const toggleDrawer = () => {
 </script>
 
 <template>
-  <v-app :theme="theme">
+  <v-app :theme="themeStore.theme">
     <v-navigation-drawer v-model="drawer"></v-navigation-drawer>
     <v-app-bar>
       <v-app-bar-nav-icon @click="toggleDrawer" />
       <v-toolbar-title>Webauthn + Firebase + Nuxt3</v-toolbar-title>
-      <v-btn :icon="themeIcon" @click="toggleTheme"></v-btn>
+      <v-btn :icon="themeStore.themeIcon" @click="themeStore.toggleTheme"></v-btn>
     </v-app-bar>
 
     <v-main>

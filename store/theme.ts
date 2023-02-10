@@ -1,17 +1,30 @@
 import { defineStore } from 'pinia'
 
-export const useThemeStore = defineStore('ThemeStore', () => {
+const THEME_LIGHT_ICON = 'mdi-weather-sunny'
+const THEME_DARK_ICON = 'mdi-weather-night'
+
+export const useThemeStore = defineStore('themeStore', () => {
+  /** The current theme in use */
   const theme = ref('light')
 
-  function useDarkTheme() {
-    theme.value = 'dark'
+  /**
+   * Switch to the dark theme.
+   */
+  const useDarkTheme = (): void => {
+    theme.value = 'dark';
   }
 
-  function useLightTheme() {
+  /**
+   * Switch to the light theme.
+   */
+  const useLightTheme = (): void => {
     theme.value = 'light'
   }
 
-  function toggleTheme() {
+  /**
+   * Toggle the theme between light and dark.
+   */
+  const toggleTheme = (): void => {
     if (theme.value == 'light') {
       useDarkTheme()
     } else {
@@ -19,5 +32,18 @@ export const useThemeStore = defineStore('ThemeStore', () => {
     }
   }
 
-  return { theme, useDarkTheme, useLightTheme, toggleTheme }
+  /**
+   * Choose which icon to display based on the theme.
+   */
+  const themeIcon = computed(() => {
+    return theme.value === 'light'
+      ? THEME_LIGHT_ICON
+      : THEME_DARK_ICON
+  })
+
+  return {
+    theme,
+    toggleTheme,
+    themeIcon
+  }
 })
