@@ -1,5 +1,5 @@
 <template>
-  <AppWrapper use-nav-drawer>
+  <AppWrapper>
     <slot />
   </AppWrapper>
 </template>
