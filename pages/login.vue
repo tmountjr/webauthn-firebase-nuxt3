@@ -20,25 +20,29 @@ const nextStep = () => {
 </script>
 
 <template>
-  <div>
-    <v-row class="justify-center text-center">
-      <v-col cols="12" md="4">
-        <h1 class="text-h4 font-weight-thin mb-4">Please Log In</h1>
-      </v-col>
-    </v-row>
-    <v-row class="justify-center">
-      <v-col cols="12" md="4">
-        <v-window v-model="step">
-          <v-window-item :value="1">
-            <v-text-field clearable v-model="email" label="Email Address" variant="solo" />
-          </v-window-item>
+  <div class="d-flex align-center justify-center fill-height">
+    <v-container fluid>
+      <v-row>
+        <v-col cols="12">
+          <v-card class="mx-auto" max-width="500">
+            <v-card-title class="text-h4 font-weight-thin text-center">
+              <span>Please Log In</span>
+            </v-card-title>
+            <v-card-text>
+              <v-window v-model="step">
+                <v-window-item :value="1">
+                  <v-text-field label="Email" value="you@example.com" variant="solo" />
+                </v-window-item>
 
-          <v-window-item :value="2">
-            <v-text-field type="password" clearable v-model="password" label="Password" variant="solo" />
-          </v-window-item>
-        </v-window>
-        <v-btn block @click="nextStep">{{ actionStep }}</v-btn>
-      </v-col>
-    </v-row>
+                <v-window-item :value="2">
+                  <v-text-field type="password" v-model="password" label="Password" variant="solo" />
+                </v-window-item>
+              </v-window>
+              <v-btn block @click="nextStep">{{ actionStep }}</v-btn>
+            </v-card-text>
+          </v-card>
+        </v-col>
+      </v-row>
+    </v-container>
   </div>
 </template>
