@@ -2,6 +2,8 @@ import { Router } from '@edgio/core'
 import { nuxtRoutes } from '@edgio/nuxt-nitro'
 import { getAuthenticationOptions, postAuthenticationOptions } from './webauthn/authentication'
 
+require('dotenv').config()
+
 const NO_CACHE = {
   browser: {
     maxAgeSeconds: 0,

@@ -1,7 +1,9 @@
-import { generateAuthenticationOptions, verifyAuthenticationResponse } from '@simplewebauthn/server'
-import { isoBase64URL, isoUint8Array } from '@simplewebauthn/server/helpers'
+import { Device } from './Device'
 import Request from '@edgio/core/router/Request'
 import Response from '@edgio/core/router/Response'
+import { convertFirebaseDevices, userDevices } from './firebase-admin'
+import { isoBase64URL, isoUint8Array } from '@simplewebauthn/server/helpers'
+import { generateAuthenticationOptions, verifyAuthenticationResponse } from '@simplewebauthn/server'
 
 const { RP_ID } = process.env
 const rpID: string = RP_ID || 'localhost'
@@ -12,7 +14,11 @@ const rpName = 'Webauthn / Firebase / Nuxt Demo'
 
 type credOpts = {
   timeout: number
-  allowCredentials?: []
+  allowCredentials?: Array<{
+    id: Uint8Array,
+    type: string,
+    transports: string[]
+  }>
   userVerification: string
   rpID: string
 }
@@ -44,12 +50,12 @@ export async function postAuthenticationOptions(req: Request, res: Response): Pr
   // The device list has potentially been posted (ie. testing a single auth
   // device).
   const jsonBody = JSON.parse(req.body)
-  let { devices } = jsonBody
-  const { fbUid } = jsonBody
+  const { devices, fbUid } = jsonBody
+  let convertedDevices: Device[]
   if (devices) {
-    devices = convertFirebaseDevices(devices)
+    convertedDevices = convertFirebaseDevices(devices)
   } else {
-    devices = await userDevices(fbUid)
+    convertedDevices = await userDevices(fbUid)
   }
 
   const opts: credOpts = {
@@ -57,7 +63,7 @@ export async function postAuthenticationOptions(req: Request, res: Response): Pr
     userVerification: 'required',
     rpID,
   }
-  opts.allowCredentials = devices.map(device => ({
+  opts.allowCredentials = convertedDevices.map(device => ({
     id: device.credentialID,
     type: 'public-key',
     transports: device.transports
@@ -68,7 +74,7 @@ export async function postAuthenticationOptions(req: Request, res: Response): Pr
     const options = generateAuthenticationOptions(opts)
     res.statusCode = 200
     res.body = JSON.stringify(options)
-  } catch (e) {
+  } catch (e: any) {
     res.statusCode = 400
     res.body = JSON.stringify({ error: e.message })
   }
