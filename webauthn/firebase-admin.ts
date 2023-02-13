@@ -30,6 +30,13 @@ export async function userDevices(fbUid: string): Promise<Device[]> {
   return devices
 }
 
+export async function authToken(fbUid: string): Promise<string> {
+  const adminApp = fbAdminApp()
+  const auth = admin.auth(admin.app(adminApp.name))
+  const token = await auth.createCustomToken(fbUid)
+  return token
+}
+
 /**
  * Convert serialized data in a list of devices into native types.
  * @param devices The list of devices from Firebase (serialized).

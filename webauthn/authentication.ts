@@ -1,18 +1,12 @@
-import { Device } from './Device'
+import { isoBase64URL, isoUint8Array } from '@simplewebauthn/server/helpers';
+import { FirebaseDevice, Device } from './Device'
 import Request from '@edgio/core/router/Request'
 import Response from '@edgio/core/router/Response'
-import { convertFirebaseDevices, userDevices } from './firebase-admin'
-import { isoBase64URL, isoUint8Array } from '@simplewebauthn/server/helpers'
-import { generateAuthenticationOptions, verifyAuthenticationResponse } from '@simplewebauthn/server'
+import { convertFirebaseDevices, userDevices, authToken } from './firebase-admin'
+import { generateAuthenticationOptions, VerifiedAuthenticationResponse, verifyAuthenticationResponse } from '@simplewebauthn/server'
+import { rpID, expectedOrigin } from './options'
 
-const { RP_ID } = process.env
-const rpID: string = RP_ID || 'localhost'
-const expectedOrigin = rpID === 'localhost'
-  ? 'http://localhost:3000'
-  : `https://${rpID}`
-const rpName = 'Webauthn / Firebase / Nuxt Demo'
-
-type credOpts = {
+interface credOpts {
   timeout: number
   allowCredentials?: Array<{
     id: Uint8Array,
@@ -21,6 +15,20 @@ type credOpts = {
   }>
   userVerification: string
   rpID: string
+}
+
+interface verifyBody {
+  devices?: Array<FirebaseDevice>
+  fbUid: string
+  currentChallenge: string
+  body: any
+  withToken: boolean
+}
+
+interface verifyReturn {
+  verified: boolean
+  authenticator?: Device
+  token?: string
 }
 
 export function getAuthenticationOptions(_req: Request, res: Response): void {
@@ -78,4 +86,64 @@ export async function postAuthenticationOptions(req: Request, res: Response): Pr
     res.statusCode = 400
     res.body = JSON.stringify({ error: e.message })
   }
+}
+
+export async function postVerifyAuthentication(req: Request, res: Response): Promise<void> {
+  if (!req.body) return
+  
+  res.setHeader('content-type', 'application/json')
+
+  const jsonBody: verifyBody = JSON.parse(req.body)
+  const { devices, fbUid, currentChallenge, body, withToken = false } = jsonBody
+  let convertedDevices: Device[]
+  if (devices) {
+    convertedDevices = convertFirebaseDevices(devices)
+  } else {
+    convertedDevices = await userDevices(fbUid)
+  }
+
+  const expectedChallenge = currentChallenge
+  let dbAuthenticator: Device | undefined
+  const bodyCredIdBuffer = isoBase64URL.toBuffer(body.rawId)
+  for (const dev of convertedDevices) {
+    if (isoUint8Array.areEqual(dev.credentialID, bodyCredIdBuffer)) {
+      dbAuthenticator = dev
+      break
+    }
+  }
+
+  if (!dbAuthenticator) {
+    res.statusCode = 400
+    res.body = JSON.stringify({ error: 'Authenticator is not registered with this site.' })
+    return
+  }
+
+  let verification: VerifiedAuthenticationResponse
+  try {
+    const opts = {
+      response: body,
+      expectedChallenge,
+      expectedOrigin,
+      expectedRPID: rpID,
+      authenticator: dbAuthenticator,
+      requireUserVerification: true
+    }
+    verification = await verifyAuthenticationResponse(opts)
+  } catch (e: any) {
+    res.statusCode = 400
+    res.body = JSON.stringify({ error: e.message })
+    return
+  }
+
+  const { verified, authenticationInfo } = verification
+  const returnValue: verifyReturn = { verified }
+  if (verified) {
+    dbAuthenticator.counter = authenticationInfo.newCounter
+    returnValue.authenticator = dbAuthenticator
+
+    if (withToken) {
+      returnValue.token = await authToken(fbUid)
+    }
+  }
+  res.body = JSON.stringify(returnValue)
 }
