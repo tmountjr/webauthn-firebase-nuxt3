@@ -7,7 +7,7 @@ import {
   GenerateRegistrationOptionsOpts,
   VerifiedRegistrationResponse,
   verifyRegistrationResponse
-} from '@simplewebauthn/server/./dist'
+} from '@simplewebauthn/server'
 import { isoBase64URL, isoUint8Array } from '@simplewebauthn/server/helpers'
 
 interface generateBody {

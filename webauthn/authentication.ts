@@ -1,8 +1,8 @@
 import Request from '@edgio/core/router/Request'
-import { FirebaseDevice, Device } from './Device'
 import Response from '@edgio/core/router/Response'
+import { userDevices, authToken } from './FirebaseAdmin'
+import { FirebaseDevice, Device, convertFirebaseDevices } from './Device'
 import { isoBase64URL, isoUint8Array } from '@simplewebauthn/server/helpers';
-import { convertFirebaseDevices, userDevices, authToken } from './FirebaseAdmin'
 import {
   generateAuthenticationOptions,
   VerifiedAuthenticationResponse,
