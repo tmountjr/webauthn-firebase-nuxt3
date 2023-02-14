@@ -5,6 +5,10 @@ import { App, initializeApp, getApp, cert } from 'firebase-admin/app'
 const { FIREBASE_DATABASE_URL = '', GAPP_CREDENTIALS = '{}' } = process.env
 const ADMIN_APP_NAME = 'firebase-admin-app'
 
+/**
+ * Initialize and return the Firebase Admin SDK.
+ * @returns An instance of the Firebase Admin SDK
+ */
 function fbAdminApp() {
   let adminApp: App
   try {

@@ -1,9 +1,13 @@
-import { isoBase64URL, isoUint8Array } from '@simplewebauthn/server/helpers';
-import { FirebaseDevice, Device } from './Device'
 import Request from '@edgio/core/router/Request'
+import { FirebaseDevice, Device } from './Device'
 import Response from '@edgio/core/router/Response'
-import { convertFirebaseDevices, userDevices, authToken } from './firebase-admin'
-import { generateAuthenticationOptions, VerifiedAuthenticationResponse, verifyAuthenticationResponse } from '@simplewebauthn/server'
+import { isoBase64URL, isoUint8Array } from '@simplewebauthn/server/helpers';
+import { convertFirebaseDevices, userDevices, authToken } from './FirebaseAdmin'
+import {
+  generateAuthenticationOptions,
+  VerifiedAuthenticationResponse,
+  verifyAuthenticationResponse
+} from '@simplewebauthn/server'
 import { rpID, expectedOrigin } from './options'
 
 interface credOpts {

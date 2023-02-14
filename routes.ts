@@ -1,6 +1,7 @@
 import { Router } from '@edgio/core'
 import { nuxtRoutes } from '@edgio/nuxt-nitro'
 import * as auth from './webauthn/authentication'
+import * as register from './webauthn/registration'
 
 require('dotenv').config()
 
@@ -21,8 +22,7 @@ export default new Router()
     cache(NO_CACHE)
     compute(auth.getAuthenticationOptions)
   })
-  .post('/auth/generate-authentication-options', ({ cache, compute }) => {
-    cache(NO_CACHE)
+  .post('/auth/generate-authentication-options', ({ compute }) => {
     compute(auth.postAuthenticationOptions)
   })
   .post('/auth/verify-authentication', ({ compute }) => {
@@ -32,5 +32,9 @@ export default new Router()
   // WebAuthn Registration work
   .post('/auth/generate-registration-options', ({ cache, compute }) => {
     cache(NO_CACHE)
+    compute(register.postRegistrationOptions)
+  })
+  .post('/auth/verify-registration', ({ compute }) => {
+    compute(register.postVerifyRegistration)
   })
   .use(nuxtRoutes)
