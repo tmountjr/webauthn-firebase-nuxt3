@@ -134,15 +134,15 @@ const nextStep = async () => {
                 <v-window-item :value="1">
                   <v-text-field label="Email" v-model="userStore.email" variant="underlined" />
                   <div class="d-flex">
-                    <v-btn @click="nextStep" class="flex-grow-1">{{ actionStep }}</v-btn>
+                    <v-btn @click="nextStep">{{ actionStep }}</v-btn>
                   </div>
                 </v-window-item>
 
                 <v-window-item :value="2">
                   <v-text-field :value="userStore.email" variant="underlined" disabled></v-text-field>
                   <div class="buttons d-flex">
-                    <v-btn @click="back" class="flex-grow-1">Go Back</v-btn>
-                    <v-btn @click="nextStep" class="flex-grow-1">Log In With Passkey</v-btn>
+                    <v-btn @click="back">Go Back</v-btn>
+                    <v-btn @click="nextStep">Log In With Passkey</v-btn>
                   </div>
                 </v-window-item>
 
@@ -160,7 +160,8 @@ const nextStep = async () => {
 </template>
 
 <style scoped>
-div.buttons button {
-  flex-basis: 50%;
+button {
+  margin: 0 0.5rem;
+  flex: 1;
 }
 </style>

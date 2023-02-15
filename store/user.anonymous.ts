@@ -1,5 +1,5 @@
 import { ref, computed } from 'vue'
-import { defineStore } from 'pinia'
+import { defineStore, acceptHMRUpdate } from 'pinia'
 import { ref as dbRef, child, get} from 'firebase/database'
 import { isoBase64URL } from '@simplewebauthn/server/helpers'
 import { Device, FirebaseDevice, convertFirebaseDevices } from '../webauthn/Device'
@@ -67,3 +67,7 @@ export const useAnonUserStore = defineStore('user.anonymous', () => {
     getCredentials
   }
 })
+
+if (import.meta.hot) {
+  import.meta.hot.accept(acceptHMRUpdate(useAnonUserStore, import.meta.hot))
+}

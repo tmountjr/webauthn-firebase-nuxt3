@@ -1,4 +1,4 @@
-import { defineStore } from 'pinia'
+import { defineStore, acceptHMRUpdate } from 'pinia'
 
 const THEME_LIGHT_ICON = 'mdi-weather-sunny'
 const THEME_DARK_ICON = 'mdi-weather-night'
@@ -46,4 +46,8 @@ export const useThemeStore = defineStore('themeStore', () => {
     toggleTheme,
     themeIcon
   }
-})
+}, { persist: true })
+
+if (import.meta.hot) {
+  import.meta.hot.accept(acceptHMRUpdate(useThemeStore, import.meta.hot))
+}
