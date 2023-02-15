@@ -5,6 +5,7 @@ import {
   User,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
+  signOut,
 } from 'firebase/auth'
 
 export const useAuthUserStore = defineStore('user.authenticated', () => {
@@ -14,12 +15,16 @@ export const useAuthUserStore = defineStore('user.authenticated', () => {
       user.value = authUser
     } else {
       user.value = undefined
+
+      // Since we're logged out, navigate back to the user-requested page
+      navigateTo(logoutRedirectDest.value)
     }
   }
 
   // Refs
   /** The Firebase Auth user */
   const user = ref<User>()
+  const logoutRedirectDest = ref('/login')
 
   // Computed
   const isAuthenticated = computed<boolean>(() => user.value !== undefined)
@@ -40,12 +45,19 @@ export const useAuthUserStore = defineStore('user.authenticated', () => {
     await signInWithEmailAndPassword($auth, email, password)
   }
 
+  const logout = async (redirectTo: string = logoutRedirectDest.value) => {
+    logoutRedirectDest.value = redirectTo
+    $auth.onAuthStateChanged(stateChangeListener)
+    await signOut($auth)
+  }
+
   return {
     user,
     isAuthenticated,
     tokenAuth,
     createUser,
     loginUser,
+    logout,
   }
 }, { persist: true })
 
