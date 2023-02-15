@@ -21,6 +21,15 @@ export interface Device extends DeviceCommon {
   credentialPublicKey: Uint8Array
 }
 
+export interface AuthUser {
+  email: string
+  credentials?: Array<Device>
+  profile: {
+    favoriteColor: string
+    name: string
+  }
+}
+
 /**
  * Convert serialized data in a list of devices into native types.
  * @param devices The list of devices from Firebase (serialized).

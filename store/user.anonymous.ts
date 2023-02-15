@@ -38,7 +38,6 @@ export const useAnonUserStore = defineStore('user.anonymous', () => {
 
   // Methods
   const getFbUid = async (mapKey: string = emailMapKey.value): Promise<string | undefined> => {
-    console.log(mapKey)
     const mapRef: string | undefined = await query(`/map/${mapKey}`)
     if (mapRef) {
       emailExists.value = true

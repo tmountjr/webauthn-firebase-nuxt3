@@ -1,5 +1,6 @@
 <script setup lang="ts">
 const userStore = useAnonUserStore()
+const authUserStore = useAuthUserStore()
 
 definePageMeta({
   layout: 'login',
@@ -12,9 +13,7 @@ definePageMeta({
  * 3. Log In With Password
  */
 const step = ref(1)
-
 const currentChallenge = ref('')
-
 const actionStep = computed(() => step.value < 3 ? 'Continue' : 'Back')
 
 const back = () => {
@@ -86,7 +85,7 @@ const nextStep = async () => {
 
     // PART 3: Verify provider's data
     try {
-      const verificationResp = await fetch('/auth/verify-authentication', {
+      const verificationResp: Response = await fetch('/auth/verify-authentication', {
         method: 'POST',
         body: JSON.stringify({
           currentChallenge: currentChallenge.value,
@@ -101,7 +100,11 @@ const nextStep = async () => {
 
       const { verified, token } = await verificationResp.json()
       if (verified) {
-        console.log('TODO: login with token', token)
+        try {
+          await authUserStore.tokenAuth(token)
+        } catch (authE) {
+          console.error('unable to log in', authE)
+        }
       } else {
         console.error('authenticator not verified')
       }

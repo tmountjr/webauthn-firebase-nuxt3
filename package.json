@@ -17,7 +17,9 @@
     "@edgio/nuxt-nitro": "^6.1.1",
     "@edgio/prefetch": "^6.1.1",
     "@edgio/vue": "^6.1.1",
+    "@pinia-plugin-persistedstate/nuxt": "^1.0.0",
     "@simplewebauthn/browser": "^7.1.0",
+    "firebase": "^9.17.1",
     "nuxt": "^3.1.2"
   },
   "dependencies": {
