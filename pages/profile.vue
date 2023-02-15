@@ -1,9 +1,5 @@
 <script setup lang="ts">
-import { onMounted } from 'vue'
 const authUserStore = useAuthUserStore()
-onMounted(async () => {
-  await authUserStore.attachListeners()
-})
 </script>
 
 <template>
