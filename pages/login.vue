@@ -12,12 +12,6 @@ definePageMeta({
 
 const password = ref('')
 
-/**
- * Which step to display
- * 1. Email Text Box
- * 2. Log In With Passkey
- * 3. Log In With Password
- */
 const step = ref(1)
 const currentChallenge = ref('')
 const actionStep = computed(() => step.value < 3 ? 'Continue' : 'Back')
@@ -28,15 +22,6 @@ const back = () => {
   }
 }
 
-/**
- * Process:
- * 1. user enters email
- * 2. system checks if email is registered or not.
- *    a. if it is registered, the available credentials are fetched from firebase
- *       1. if there are no credentials, the user is prompted to sign in via a "password" (which is not saved on this demo); next window = "log in with password"
- *       2. if there are credentials, the user is prompted to sign in via passkey; next window = "log in with authenticator"
- *    b. if it is not registered, an account will be created and the user is prompted to sign in via a "password" (which is not saved on this demo); next window = "log in with password"
- */
 const nextStep = async () => {
   if (step.value === 1) {
     // User has just entered an email, check if it exists.
