@@ -50,6 +50,7 @@ export const useAnonUserStore = defineStore('user.anonymous', () => {
   }
 
   const getCredentials = async (uid: string = fbUid.value): Promise<Device[]> => {
+    userCreds.value = undefined
     const fbCreds: FirebaseDevice[] = await query(`/users/${uid}/credentials`)
     if (fbCreds) {
       const nativeCreds = convertFirebaseDevices(fbCreds)

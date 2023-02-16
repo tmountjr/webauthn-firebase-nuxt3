@@ -34,7 +34,14 @@ export const useAuthUserStore = defineStore('user.authenticated', () => {
 
     // Once the user has been created, they need a map entry as well
     const userKey = isoBase64URL.fromString(email)
-    await set(dbRef($database, `/users/${creds.user.uid}/email`), email)
+    // await set(dbRef($database, `/users/${creds.user.uid}/email`), email)
+    await set(dbRef($database, `/users/${creds.user.uid}`), {
+      email,
+      profile: {
+        favoriteColor: '#000000', // paint it black
+        name: 'SET ME'
+      }
+    })
     await set(dbRef($database, `/map/${userKey}`), creds.user.uid)
   }
 

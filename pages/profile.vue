@@ -16,9 +16,10 @@ definePageMeta({
       </v-col>
     </v-row>
 
-    <v-row>
+    <v-row v-if="authUserStore.profile">
       <v-col cols="12" md="3">
-        <p><strong>Name:</strong> {{ authUserStore.profile.name }}</p>
+        <p><strong>Name:</strong></p>
+        <v-text-field v-model="authUserStore.profile.name" variant="underlined" />
       </v-col>
       <v-col cols="12" md="3">
         <p><strong>Favorite Color:</strong></p>
@@ -26,7 +27,7 @@ definePageMeta({
       </v-col>
     </v-row>
 
-    <v-row>
+    <v-row v-if="authUserStore.profile">
       <v-col cols="12" md="6">
         <v-btn block @click="authUserStore.saveToProfile">Save Profile Information</v-btn>
       </v-col>
