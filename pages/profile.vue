@@ -1,5 +1,11 @@
 <script setup lang="ts">
 const authUserStore = useAuthUserStore()
+onMounted(() => {
+  authUserStore.attachListeners()
+})
+definePageMeta({
+  middleware: ['auth']
+})
 </script>
 
 <template>

@@ -2,8 +2,13 @@
 import { onMounted } from 'vue'
 const authUser = useAuthUserStore()
 
-onMounted(() => {
-  authUser.logout()
+definePageMeta({
+  layout: 'login',
+})
+
+onMounted(async () => {
+  await authUser.logout()
+  navigateTo('/login')
 })
 </script>
 

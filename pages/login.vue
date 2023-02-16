@@ -2,9 +2,15 @@
 const userStore = useAnonUserStore()
 const authUserStore = useAuthUserStore()
 
+onMounted(() => {
+  authUserStore.attachListeners()
+})
+
 definePageMeta({
   layout: 'login',
 })
+
+const password = ref('')
 
 /**
  * Which step to display
@@ -17,8 +23,8 @@ const currentChallenge = ref('')
 const actionStep = computed(() => step.value < 3 ? 'Continue' : 'Back')
 
 const back = () => {
-  if (step.value > 1) {
-    step.value = step.value - 1
+  if (step.value == 2 || step.value == 3) {
+    step.value = 1
   }
 }
 
@@ -103,7 +109,7 @@ const nextStep = async () => {
         try {
           await authUserStore.tokenAuth(token)
           if (authUserStore.isAuthenticated) {
-            navigateTo('/')
+            navigateTo('/profile')
           }
         } catch (authE) {
           console.error('unable to log in', authE)
@@ -119,6 +125,24 @@ const nextStep = async () => {
   } else if (step.value === 3) {
     // Handle click event for logging in with password
     // Account may not exist at this point.
+    if (userStore.emailExists) {
+      // Try logging in with password
+      try {
+        await authUserStore.loginUser(userStore.email, password.value)
+        navigateTo('/profile')
+      } catch (e: any) {
+        console.error('Unable to log in:', e.code)
+        // TODO: nicer message display
+      }
+    } else {
+      // Create the account
+      try {
+        await authUserStore.createUser(userStore.email, password.value)
+        navigateTo('/profile')
+      } catch (e: any) {
+        console.error('Unable to create account:', e.code)
+      }
+    }
   }
 }
 </script>
@@ -150,7 +174,11 @@ const nextStep = async () => {
                 </v-window-item>
 
                 <v-window-item :value="3">
-                  <v-text-field type="password" label="Password" variant="underlined" />
+                  <v-text-field type="password" label="Password" variant="underlined" v-model="password" />
+                  <div class="buttons d-flex">
+                    <v-btn @click="back">Go Back</v-btn>
+                    <v-btn @click="nextStep">{{ userStore.emailExists ? 'Log In With Password' : 'Create Account' }}</v-btn>
+                  </div>
                 </v-window-item>
               </v-window>
               
