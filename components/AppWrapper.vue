@@ -15,10 +15,10 @@ const toggleDrawer = () => {
   <v-app :theme="themeStore.theme">
     <v-navigation-drawer v-if="useNavDrawer" v-model="drawer">
       <v-list>
-        <div v-if="authUserStore.isAuthenticated">
+        <div v-if="authUserStore.isAuthenticated && authUserStore.profile">
           <v-list-item
             prepend-icon="mdi-account"
-            :title="authUserStore.profile.name"
+            :title="authUserStore.profile?.name || ''"
             :subtitle="authUserStore.user?.email || ''"
           ></v-list-item>
           <v-divider />

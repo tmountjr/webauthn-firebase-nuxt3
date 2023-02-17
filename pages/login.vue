@@ -93,9 +93,7 @@ const nextStep = async () => {
       if (verified) {
         try {
           await authUserStore.tokenAuth(token)
-          if (authUserStore.isAuthenticated) {
-            navigateTo('/profile')
-          }
+          navigateTo('/profile')
         } catch (authE) {
           console.error('unable to log in', authE)
         }
